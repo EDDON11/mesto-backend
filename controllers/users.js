@@ -6,20 +6,24 @@ const dataPath = path.join(__dirname, "..", "data", "users.json");
 const getUsers = (req, res) => {
   return getDataFromFile(dataPath)
     .then((users) => res.status(200).send(users))
-    .catch((err) => res.status(400).send(err));
+    .catch(() => res.status(500).send({ message: "Ошибка сервера" }));
 };
 
-const getProfile = (req, red) => {
+const getProfile = (req, res) => {
   return getDataFromFile(dataPath)
-    .then((users) => users.find((users) => users.id === req.params.id))
+    .then((users) => users.find((user) => user._id === req.params._id))
     .then((user) => {
       if (!user) {
         return res.status(404).send({ message: "Нет пользователя с таким id" });
       }
 
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
-    .catch((err) => res.ststus(400).send(err));
+    .catch(() =>
+      res
+        .ststus(500)
+        .send({ message: "Не удалось получить информацию о пользователе" })
+    );
 };
 
 module.exports = { getUsers, getProfile };

@@ -3,7 +3,7 @@ const path = require("path");
 const usersRouter = require("./routes/users");
 const cardsRouter = require("./routes/cards");
 
-const { PORT = 3000, BASE_PATH } = process.env;
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -17,5 +17,4 @@ app.use((req, res) => {
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`);
-  console.log(BASE_PATH);
 });
