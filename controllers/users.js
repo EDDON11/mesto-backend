@@ -1,10 +1,7 @@
-const path = require("path");
-const getDataFromFile = require("../helpers/files");
-
-const dataPath = path.join(__dirname, "..", "data", "users.json");
+const User = require("../models/user");
 
 const getUsers = (req, res) => {
-  return getDataFromFile(dataPath)
+  User.find({})
     .then((users) => res.status(200).send(users))
     .catch(() =>
       res
@@ -14,20 +11,78 @@ const getUsers = (req, res) => {
 };
 
 const getProfile = (req, res) => {
-  return getDataFromFile(dataPath)
-    .then((users) => {
-      const user = users.find((user) => user._id === req.params.id);
-      if (!user) {
-        res.status(404).send({ message: `Нет пользователя с таким id` });
-      }
-
-      return res.status(200).send(user);
+  User.findOne({ _id: req.params._id })
+    .orFail(() => {
+      throw new Error("NotFound");
     })
-    .catch(() =>
-      res
-        .status(500)
-        .send({ message: "Не удалось получить информацию о пользователе" })
-    );
+    .then((user) => {
+      return res.send(user);
+    })
+    .catch((err) => {
+      if (err.message === "NotFound") {
+        return res.status(404).send({ message: "Пользователь не найден" });
+      }
+      if (err.kind === "ObjectId") {
+        return res.status(400).send({ message: "Нет пользователя с таким id" });
+      }
+      return res.status(500).send({ message: "На сервере произошла ошибка" });
+    });
 };
 
-module.exports = { getUsers, getProfile };
+const createUser = (req, res) => {
+  const { name, about, avatar } = req.body;
+  User.create({ name, about, avatar })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: "Неверные данные" });
+      }
+      return res.status(500).send({ message: "Ошибка при отправке данных" });
+    });
+};
+
+const updateProfile = (req, res) => {
+  const { name, about } = req.body;
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    { runValidators: true, new: true }
+  )
+    .orFail(() => {
+      throw new Error("NotFound");
+    })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: "Неверные данные" });
+      }
+      return res.status(500).send({ message: "Ошибка при отправке данных" });
+    });
+};
+
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  User.findByIdAndUpdate(
+    req.res._id,
+    { avatar },
+    { runValidators: true, new: true }
+  )
+    .orFail(() => {
+      throw new Error("NotFound");
+    })
+    .then((user) => res.send({ data: user }))
+    .catch((err) => {
+      if (err.name === "ValidationError") {
+        return res.status(400).send({ message: "Неверные данные" });
+      }
+      return res.status(500).send({ message: "Ошибка при отправке данных" });
+    });
+};
+
+module.exports = {
+  getUsers,
+  getProfile,
+  createUser,
+  updateProfile,
+  updateAvatar,
+};
