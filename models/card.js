@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -13,17 +13,17 @@ const cardSchema = new mongoose.Schema({
     reqired: true,
     validate: {
       validator(valid) {
-        return /^https?:\/\/(www\.)?[\w-.~:/?#[\]@!$&'()*+,;=]+#?$/i.test(
-          valid
+        return /(http|https):\/\/(www\.)?(\S+)\.([a-zA-Z])+(\/)?(\w-\._~:\/\?#\[\]@!\$&’\(\)\*\+,;=)?/.test(
+          valid,
         );
       },
-      message: "Введите правильный url",
+      message: 'Введите правильный url',
     },
   },
 
   owner: {
     type: mongoose.Types.ObjectId,
-    ref: "user",
+    ref: 'user',
     reqired: true,
   },
 
@@ -38,4 +38,4 @@ const cardSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("card", cardSchema);
+module.exports = mongoose.model('card', cardSchema);
