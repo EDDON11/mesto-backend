@@ -4,19 +4,19 @@ const userSchema = new mongoose.Schema({
   name: {
     minlength: 2,
     maxlength: 30,
-    reqired: true,
+    required: true,
     type: String,
   },
 
   about: {
     minlength: 2,
     maxlength: 30,
-    reqired: true,
+    required: true,
     type: String,
   },
 
   avatar: {
-    reqired: true,
+    required: true,
     type: String,
     validate: {
       validator(valid) {

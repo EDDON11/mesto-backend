@@ -4,13 +4,13 @@ const cardSchema = new mongoose.Schema({
   name: {
     minlength: 2,
     maxlength: 30,
-    reqired: true,
+    required: true,
     type: String,
   },
 
   link: {
     type: String,
-    reqired: true,
+    required: true,
     validate: {
       validator(valid) {
         return /(http|https):\/\/(www\.)?(\S+)\.([a-zA-Z])+(\/)?(\w-\._~:\/\?#\[\]@!\$&’\(\)\*\+,;=)?/.test(
@@ -24,7 +24,7 @@ const cardSchema = new mongoose.Schema({
   owner: {
     type: mongoose.Types.ObjectId,
     ref: 'user',
-    reqired: true,
+    required: true,
   },
 
   likes: {
